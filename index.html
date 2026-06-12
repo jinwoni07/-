@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>보컬 연습실 예약 시스템 | 음악교육과</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Header (hidden during login) -->
+  <header id="app-header" style="display: none;">
+    <div class="logo-container">
+      <div class="logo-icon">
+        <i data-lucide="music-4" style="color: #fff; width: 20px; height: 20px;"></i>
+      </div>
+      <div>
+        <h1>음악교육과 보컬 연습실 예약</h1>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem;">가창시험 준비 기간 통합 시스템 · 2026.06.07 ~ 06.15</p>
+      </div>
+    </div>
+    <div class="user-info-bar">
+      <div class="user-tag" id="user-badge">
+        <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+        <span id="user-display-id">학번</span>
+      </div>
+      <button class="logout-btn" id="btn-logout" title="로그아웃">
+        <i data-lucide="log-out" style="width: 16px; height: 16px; display: block;"></i>
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- 1. Login Screen -->
+    <section class="auth-wrapper" id="section-login">
+      <div class="auth-card glass-panel">
+        <div class="auth-header">
+          <div class="auth-icon">
+            <i data-lucide="mic" style="color: #fff; width: 32px; height: 32px;"></i>
+          </div>
+          <h2>가창시험 대비 연습실 예약</h2>
+          <p>학번과 비밀번호를 입력하여 로그인하세요.</p>
+        </div>
+
+        <form class="auth-form" id="login-form">
+          <div class="form-group">
+            <label for="student-id">학번 (Student ID)</label>
+            <div class="input-wrapper">
+              <input type="text" id="student-id" placeholder="학번을 입력하세요 (예: 202612345)" class="form-input" required autocomplete="username">
+              <i data-lucide="hash"></i>
+            </div>
+            <div class="error-message" id="error-student-id">학번을 올바르게 입력해주세요.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="student-pwd">비밀번호 (Password)</label>
+            <div class="input-wrapper">
+              <input type="password" id="student-pwd" placeholder="비밀번호를 입력하세요" class="form-input" required autocomplete="current-password">
+              <i data-lucide="key-round"></i>
+            </div>
+            <div class="error-message" id="error-password">비밀번호를 입력해주세요.</div>
+          </div>
+
+          <button type="submit" class="auth-btn">
+            <span>로그인하기</span>
+            <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 2. Dashboard -->
+    <section class="dashboard-grid" id="section-dashboard" style="display: none;">
+
+      <!-- Left: Date + Room Selection -->
+      <div class="rooms-panel glass-panel">
+
+        <!-- Date Selector -->
+        <h2 class="panel-title">
+          <i data-lucide="calendar-days"></i>
+          <span>날짜 선택</span>
+        </h2>
+        <div class="date-selector-wrapper" id="date-selector-container">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <!-- Room List -->
+        <h2 class="panel-title" style="margin-top: 1.25rem;">
+          <i data-lucide="search"></i>
+          <span>연습실 조회</span>
+        </h2>
+        <div class="rooms-list" id="rooms-list-container">
+
+          <div class="room-card" data-room-id="1">
+            <div class="room-icon-wrapper">
+              <i data-lucide="mic"></i>
+            </div>
+            <div class="room-details">
+              <h3>제 1 연습실</h3>
+              <p>마이크, 앰프 및 모니터 오디오 최적화</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron-arrow"></i>
+          </div>
+
+          <div class="room-card" data-room-id="2">
+            <div class="room-icon-wrapper">
+              <i data-lucide="music"></i>
+            </div>
+            <div class="room-details">
+              <h3>제 2 연습실</h3>
+              <p>업라이트 피아노 완비, 클래식 보컬 추천</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron-arrow"></i>
+          </div>
+
+          <div class="room-card" data-room-id="3">
+            <div class="room-icon-wrapper">
+              <i data-lucide="sliders"></i>
+            </div>
+            <div class="room-details">
+              <h3>제 3 연습실</h3>
+              <p>소음방지 부스형 구조, 개인 집중 가창 연습</p>
+            </div>
+            <i data-lucide="chevron-right" class="chevron-arrow"></i>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: Scheduler Panel -->
+      <div class="scheduler-panel glass-panel" id="scheduler-panel-container">
+
+        <div class="scheduler-placeholder" id="scheduler-placeholder">
+          <i data-lucide="calendar"></i>
+          <p>날짜와 연습실을 선택하면<br>예약 가능한 시간대가 표시됩니다.</p>
+        </div>
+
+        <div id="scheduler-content" style="display: none; height: 100%;">
+          <h2 class="panel-title">
+            <i data-lucide="clock"></i>
+            <span>빈 시간대 조회</span>
+          </h2>
+
+          <div class="scheduler-header">
+            <div class="selected-room-title" id="current-room-name">
+              <i data-lucide="home" style="width: 18px; height: 18px;"></i>
+              <span>제 1 연습실</span>
+            </div>
+            <div class="date-badge" id="current-date-badge">날짜 선택</div>
+          </div>
+
+          <div class="legend-container">
+            <div class="legend-item">
+              <span class="legend-color blue"></span>
+              <span>예약 가능 (Available)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color red"></span>
+              <span>예약 완료 (Reserved)</span>
+            </div>
+          </div>
+
+          <div class="time-slots-grid" id="time-slots-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 음악교육과 학생회. All rights reserved. 가창시험 대비 연습실 운영 시스템 · 운영기간: 2026.06.07 ~ 06.15</p>
+  </footer>
+
+  <!-- Booking Confirmation Modal -->
+  <div class="modal-overlay" id="booking-modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon">
+        <i data-lucide="calendar-check"></i>
+      </div>
+      <h3>예약 확인</h3>
+      <p>선택하신 시간대에 연습실 예약을 진행하시겠습니까?</p>
+
+      <div class="modal-details-badge">
+        <div id="modal-room-text">연습실: <span class="highlight">제 1 연습실</span></div>
+        <div id="modal-date-text">날짜: <span class="highlight">6/7 (토)</span></div>
+        <div id="modal-time-text">시간대: <span class="highlight">15:00 ~ 17:00</span></div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-btn cancel" id="btn-modal-cancel">아니오</button>
+        <button class="modal-btn confirm" id="btn-modal-confirm">예</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
